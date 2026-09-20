@@ -17,13 +17,14 @@ Open the printed local URL on your phone (or resize your browser to a phone
 width) to try the swipe gestures. `npm run build` produces a static
 `dist/` folder you can host anywhere or wrap into a PWA/app shell.
 
-## Reading your own text
+## Book text
 
-The app ships with a small placeholder sample so it works out of the box.
-Use the "Import library (JSON)" button on the home screen to load the real
-book text; see `src/data/README.md` for the JSON schema (books → chapters →
-verses, with optional inline footnote markers). Imported text is saved to
-the browser's local storage.
+The app ships with the full Book of Mormon text by default (public domain
+edition from [bcbooks/scriptures-json](https://github.com/bcbooks/scriptures-json),
+footnotes/chapter summaries excluded — see `src/data/README.md`). Use the
+"Import library (JSON)" button on the home screen to load a different
+edition instead; imported text is saved to the browser's local storage, and
+"Reset to default" brings back the bundled text.
 
 ## Controls
 

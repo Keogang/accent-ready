@@ -5,11 +5,12 @@ interface HomeScreenProps {
   library: Book[]
   onSelectChapter: (loc: VerseLocation) => void
   onImportLibrary: (library: Book[]) => void
-  onResetToSample: () => void
-  usingSample: boolean
+  onResetToDefault: () => void
+  note: string | null
+  canReset: boolean
 }
 
-export function HomeScreen({ library, onSelectChapter, onImportLibrary, onResetToSample, usingSample }: HomeScreenProps) {
+export function HomeScreen({ library, onSelectChapter, onImportLibrary, onResetToDefault, note, canReset }: HomeScreenProps) {
   const [expandedBookId, setExpandedBookId] = useState<string | null>(library[0]?.id ?? null)
   const [importError, setImportError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -44,18 +45,14 @@ export function HomeScreen({ library, onSelectChapter, onImportLibrary, onResetT
           Import library (JSON)
         </button>
         <input ref={fileInputRef} type="file" accept="application/json" hidden onChange={handleFileChange} />
-        {!usingSample && (
-          <button className="pill-button pill-button--ghost" onClick={onResetToSample}>
-            Reset to sample
+        {canReset && (
+          <button className="pill-button pill-button--ghost" onClick={onResetToDefault}>
+            Reset to default
           </button>
         )}
       </div>
       {importError && <p className="import-error">{importError}</p>}
-      {usingSample && (
-        <p className="sample-note">
-          Showing sample text. Import your own JSON library to read the full book — see src/data/README.md.
-        </p>
-      )}
+      {note && <p className="sample-note">{note}</p>}
 
       <div className="book-list">
         {library.map((book) => {
