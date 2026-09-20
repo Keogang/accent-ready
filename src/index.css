@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Iowan Old Style', 'Georgia', 'Times New Roman', serif;
+  background: #141110;
+  color: #f4ecdf;
+  overscroll-behavior: none;
+}
+
+button {
+  font-family: inherit;
+}
