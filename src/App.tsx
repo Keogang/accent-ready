@@ -2,8 +2,12 @@ import { useEffect, useState } from 'react'
 import type { Book, VerseLocation } from './data/types'
 import { loadImportedLibrary, fetchBundledLibrary, saveLibrary, clearImportedLibrary } from './data/storage'
 import { sampleLibrary } from './data/sampleLibrary'
+import { loadAnnotations, createAnnotation, updateAnnotation, deleteAnnotation } from './data/annotations'
+import type { Annotation, AnnotationDraft } from './data/annotationTypes'
+import { loadProgress, saveProgress } from './data/progress'
 import { HomeScreen } from './components/HomeScreen'
 import { VerseReader } from './components/VerseReader'
+import { AnnotationsScreen } from './components/AnnotationsScreen'
 import './App.css'
 
 type LibrarySource = 'imported' | 'bundled' | 'sample'
@@ -12,6 +16,9 @@ export default function App() {
   const [library, setLibrary] = useState<Book[] | null>(null)
   const [source, setSource] = useState<LibrarySource>('bundled')
   const [location, setLocation] = useState<VerseLocation | null>(null)
+  const [continueLocation, setContinueLocation] = useState<VerseLocation | null>(() => loadProgress())
+  const [highlightsOpen, setHighlightsOpen] = useState(false)
+  const [annotations, setAnnotations] = useState<Annotation[]>(() => loadAnnotations())
 
   useEffect(() => {
     const imported = loadImportedLibrary()
@@ -30,6 +37,12 @@ export default function App() {
         setSource('sample')
       })
   }, [])
+
+  useEffect(() => {
+    if (!location) return
+    saveProgress(location)
+    setContinueLocation(location)
+  }, [location])
 
   function handleImportLibrary(newLibrary: Book[]) {
     saveLibrary(newLibrary)
@@ -53,11 +66,39 @@ export default function App() {
       })
   }
 
+  function handleCreateHighlight(draft: AnnotationDraft): Annotation {
+    const { annotations: next, created } = createAnnotation(annotations, draft)
+    setAnnotations(next)
+    return created
+  }
+
+  function handleUpdateAnnotation(id: string, changes: Partial<Pick<Annotation, 'note' | 'tags'>>) {
+    setAnnotations(updateAnnotation(annotations, id, changes))
+  }
+
+  function handleDeleteAnnotation(id: string) {
+    setAnnotations(deleteAnnotation(annotations, id))
+  }
+
   if (!library) {
     return (
       <div className="loading-screen">
         <p>Loading…</p>
       </div>
+    )
+  }
+
+  if (highlightsOpen) {
+    return (
+      <AnnotationsScreen
+        annotations={annotations}
+        onBack={() => setHighlightsOpen(false)}
+        onJumpTo={(loc) => {
+          setLocation(loc)
+          setHighlightsOpen(false)
+        }}
+        onDeleteAnnotation={handleDeleteAnnotation}
+      />
     )
   }
 
@@ -76,6 +117,9 @@ export default function App() {
         onResetToDefault={handleResetToBundled}
         note={note}
         canReset={source === 'imported'}
+        continueLocation={continueLocation}
+        onOpenHighlights={() => setHighlightsOpen(true)}
+        annotationCount={annotations.length}
       />
     )
   }
@@ -86,6 +130,11 @@ export default function App() {
       location={location}
       onLocationChange={setLocation}
       onGoHome={() => setLocation(null)}
+      onOpenHighlights={() => setHighlightsOpen(true)}
+      annotations={annotations}
+      onCreateHighlight={handleCreateHighlight}
+      onUpdateAnnotation={handleUpdateAnnotation}
+      onDeleteAnnotation={handleDeleteAnnotation}
     />
   )
 }

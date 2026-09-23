@@ -1,5 +1,6 @@
 import { useRef, useState, type ChangeEvent } from 'react'
 import type { Book, VerseLocation } from '../data/types'
+import { findBook } from '../data/navigation'
 
 interface HomeScreenProps {
   library: Book[]
@@ -8,9 +9,22 @@ interface HomeScreenProps {
   onResetToDefault: () => void
   note: string | null
   canReset: boolean
+  continueLocation: VerseLocation | null
+  onOpenHighlights: () => void
+  annotationCount: number
 }
 
-export function HomeScreen({ library, onSelectChapter, onImportLibrary, onResetToDefault, note, canReset }: HomeScreenProps) {
+export function HomeScreen({
+  library,
+  onSelectChapter,
+  onImportLibrary,
+  onResetToDefault,
+  note,
+  canReset,
+  continueLocation,
+  onOpenHighlights,
+  annotationCount,
+}: HomeScreenProps) {
   const [expandedBookId, setExpandedBookId] = useState<string | null>(library[0]?.id ?? null)
   const [importError, setImportError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -33,6 +47,8 @@ export function HomeScreen({ library, onSelectChapter, onImportLibrary, onResetT
     }
   }
 
+  const continueBook = continueLocation ? findBook(library, continueLocation.bookId) : undefined
+
   return (
     <div className="home">
       <header className="home-header">
@@ -40,11 +56,23 @@ export function HomeScreen({ library, onSelectChapter, onImportLibrary, onResetT
         <p>Pick a chapter to start reading, one verse at a time.</p>
       </header>
 
+      {continueLocation && continueBook && (
+        <button className="continue-card" onClick={() => onSelectChapter(continueLocation)}>
+          <span className="continue-card-label">Continue reading</span>
+          <span className="continue-card-reference">
+            {continueBook.title} {continueLocation.chapterNumber}:{continueLocation.verseNumber}
+          </span>
+        </button>
+      )}
+
       <div className="home-actions">
         <button className="pill-button" onClick={() => fileInputRef.current?.click()}>
           Import library (JSON)
         </button>
         <input ref={fileInputRef} type="file" accept="application/json" hidden onChange={handleFileChange} />
+        <button className="pill-button pill-button--ghost" onClick={onOpenHighlights}>
+          Highlights &amp; notes{annotationCount > 0 ? ` (${annotationCount})` : ''}
+        </button>
         {canReset && (
           <button className="pill-button pill-button--ghost" onClick={onResetToDefault}>
             Reset to default

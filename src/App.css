@@ -111,7 +111,6 @@
   display: flex;
   flex-direction: column;
   outline: none;
-  touch-action: none;
 }
 
 .reader-topbar {
@@ -167,6 +166,7 @@
   justify-content: center;
   overflow: hidden;
   padding: 0 1.5rem;
+  touch-action: none;
 }
 
 .verse-card {
@@ -212,6 +212,8 @@
   flex-direction: column;
   gap: 0.6rem;
   align-items: center;
+  max-height: 45vh;
+  overflow-y: auto;
 }
 
 .footnotes {
@@ -239,12 +241,6 @@
   color: #f4ecdf;
 }
 
-.footnotes--empty {
-  font-size: 0.8rem;
-  opacity: 0.4;
-  text-align: center;
-}
-
 .swipe-hint {
   font-size: 0.75rem;
   opacity: 0.4;
@@ -258,4 +254,255 @@
   gap: 1rem;
   align-items: center;
   justify-content: center;
+}
+
+/* Continue reading */
+
+.continue-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: flex-start;
+  width: 100%;
+  text-align: left;
+  background: #262019;
+  border: 1px solid #ad9c7f;
+  border-radius: 12px;
+  padding: 0.85rem 1.1rem;
+  margin-top: 1.25rem;
+  cursor: pointer;
+}
+
+.continue-card-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ad9c7f;
+}
+
+.continue-card-reference {
+  font-size: 1.05rem;
+  color: #f4ecdf;
+}
+
+.pill-button--danger {
+  background: transparent;
+  border-color: #e08a7d;
+  color: #e08a7d;
+}
+
+/* Highlighting */
+
+.highlight-mark {
+  background: rgba(173, 156, 127, 0.32);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 1px;
+  cursor: pointer;
+}
+
+.highlight-mark--noted {
+  box-shadow: inset 0 -2px 0 0 #ad9c7f;
+}
+
+.highlight-mark--active {
+  background: rgba(173, 156, 127, 0.55);
+}
+
+.highlight-toolbar {
+  position: fixed;
+  transform: translate(-50%, -140%);
+  background: #ad9c7f;
+  color: #141110;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+
+/* Annotations (per verse) */
+
+.annotations {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.annotation-item {
+  text-align: left;
+  background: #1f1b18;
+  border: 1px solid #322b25;
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.annotation-item--active {
+  border-color: #ad9c7f;
+}
+
+.annotation-quote {
+  color: #f4ecdf;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.annotation-note {
+  color: #cfc3ae;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.annotation-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tag-pill {
+  font-size: 0.75rem;
+  color: #ad9c7f;
+  background: rgba(173, 156, 127, 0.12);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+}
+
+.annotation-editor {
+  width: 100%;
+  max-width: 560px;
+  background: #1f1b18;
+  border: 1px solid #ad9c7f;
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.annotation-editor-quote {
+  font-size: 0.85rem;
+  color: #cfc3ae;
+  line-height: 1.4;
+}
+
+.annotation-note-input,
+.annotation-tags-input {
+  width: 100%;
+  background: #141110;
+  border: 1px solid #3a3129;
+  border-radius: 8px;
+  color: #f4ecdf;
+  padding: 0.5rem 0.65rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.annotation-note-input:focus,
+.annotation-tags-input:focus {
+  outline: none;
+  border-color: #ad9c7f;
+}
+
+.annotation-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Highlights & notes screen */
+
+.reader-topbar--inline {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1.25rem;
+}
+
+.tag-pill--filter {
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.tag-pill--filter.tag-pill--active {
+  border-color: #ad9c7f;
+  color: #f4ecdf;
+  background: rgba(173, 156, 127, 0.2);
+}
+
+.saved-list {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.saved-item {
+  display: flex;
+  align-items: stretch;
+  gap: 0.4rem;
+  background: #1f1b18;
+  border: 1px solid #322b25;
+  border-radius: 12px;
+}
+
+.saved-item-main {
+  flex: 1;
+  text-align: left;
+  padding: 0.8rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  cursor: pointer;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  color: #f4ecdf;
+}
+
+.saved-item-reference {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ad9c7f;
+}
+
+.saved-item-quote {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.saved-item-note {
+  font-size: 0.85rem;
+  color: #cfc3ae;
+  line-height: 1.4;
+}
+
+.saved-item-delete {
+  flex-shrink: 0;
+  width: 44px;
+  border: none;
+  background: transparent;
+  color: #6b6153;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.saved-item-delete:hover {
+  color: #e08a7d;
 }

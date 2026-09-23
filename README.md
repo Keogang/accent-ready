@@ -34,3 +34,15 @@ edition instead; imported text is saved to the browser's local storage, and
 - **Home icon** (top-left in the reader): back to the chapter picker.
 - **Tap a footnote marker** in the verse, or a note at the bottom, to
   highlight the matching note.
+- **Select text** in a verse to highlight it — a "+ Highlight" button
+  appears; tap it, then optionally add a note and `#tags` in the panel
+  that opens below the verse.
+- **Pencil icon** (top-right in the reader), or "Highlights & notes" on the
+  home screen: opens every saved highlight/note, filterable by tag. Tap an
+  entry to jump straight to that verse.
+
+## Reading progress
+
+Your position is saved automatically as you read (in the browser's local
+storage) and offered as "Continue reading" on the home screen — no explicit
+save step needed.
