@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quiet Pages</title>
+<style>
+  :root { --fg: #1d1d1f; --muted: #6b6b70; --line: #e3e3e6; --bg: #fff; --accent: #2f5d50; --panel: #f6f6f7; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fg: #ececee; --muted: #a0a0a8; --line: #36363b; --bg: #1c1c1f; --accent: #8cc7b5; --panel: #26262a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; width: 320px; font: 13px/1.45 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  h1 { font-size: 15px; margin: 0; }
+  section { padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 6px; }
+  label { display: flex; gap: 8px; align-items: center; padding: 3px 0; cursor: pointer; }
+  textarea { width: 100%; min-height: 44px; font: inherit; color: inherit; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px; resize: vertical; }
+  .hint { color: var(--muted); font-size: 12px; margin: 4px 0 0; }
+  .stat { font-size: 22px; font-weight: 600; }
+  .sample { background: var(--panel); border-radius: 6px; padding: 6px 8px; margin-top: 6px; font-size: 12px; max-height: 72px; overflow: auto; word-break: break-word; }
+  .switch { accent-color: var(--accent); transform: scale(1.3); }
+  input { accent-color: var(--accent); }
+  .disabled { opacity: .45; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Quiet Pages</h1>
+  <label title="Turn filtering on or off"><span id="state">On</span><input type="checkbox" id="enabled" class="switch"></label>
+</header>
+
+<div id="settings">
+  <section>
+    <h2>This page</h2>
+    <div><span class="stat" id="hidden">–</span> words hidden</div>
+    <div class="hint">Text the extension can read on this page:</div>
+    <div class="sample" id="sample">Open a book in Kindle Cloud Reader.</div>
+    <p class="hint">If this looks like your book's words, filtering works. If it's empty or gibberish while a book is open, tell Claude.</p>
+  </section>
+
+  <section>
+    <h2>What to hide</h2>
+    <div id="tiers"></div>
+  </section>
+
+  <section>
+    <h2>How to hide it</h2>
+    <label><input type="radio" name="style" value="bar"> Black bar</label>
+    <label><input type="radio" name="style" value="blur"> Blur</label>
+    <label><input type="radio" name="style" value="replace"> Replace with [—]</label>
+    <label><input type="checkbox" id="peek"> Click a hidden word to show it</label>
+  </section>
+
+  <section>
+    <h2>Also hide these words</h2>
+    <textarea id="customBlock" placeholder="One per line. Start with * to catch it inside longer words."></textarea>
+    <h2 style="margin-top:10px">Never hide these words</h2>
+    <textarea id="customAllow" placeholder="One per line, e.g. a character named Dick"></textarea>
+    <p class="hint">Changes save and apply right away.</p>
+  </section>
+</div>
+
+<script src="words.js"></script>
+<script src="filter.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

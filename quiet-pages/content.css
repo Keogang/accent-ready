@@ -1,0 +1,25 @@
+/* Black bar: keeps the word's exact width so the page layout doesn't move. */
+.qp-hit.qp-bar {
+  background: #111 !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+  border-radius: 2px;
+}
+
+.qp-hit.qp-blur {
+  filter: blur(5px);
+}
+
+.qp-hit.qp-replace {
+  opacity: 0.6;
+}
+
+.qp-hit.qp-revealed {
+  background: transparent !important;
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+  filter: none;
+  opacity: 1;
+  outline: 1px dashed currentColor;
+}
