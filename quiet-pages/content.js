@@ -200,7 +200,7 @@
       var ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       var corner = ctx.getImageData(2, 2, 1, 1).data;
-      var res = await chrome.runtime.sendMessage({ type: "qp-ocr", image: canvas.toDataURL("image/png") });
+      var res = await qpSend({ type: "qp-ocr", image: canvas.toDataURL("image/png") });
       if (!res || !res.ok) throw new Error((res && res.error) || "The word reader did not answer");
       // Store word boxes as fractions of the page so they fit any display size.
       var lines = res.lines.map(function (words) {
@@ -351,13 +351,13 @@
     scheduleReport();
   }
 
-  chrome.storage.sync.get(QP_DEFAULTS, function (stored) {
+  QP_STORE.get(QP_DEFAULTS, function (stored) {
     settings = Object.assign({}, QP_DEFAULTS, stored);
     apply();
   });
 
   chrome.storage.onChanged.addListener(function (changes, area) {
-    if (area !== "sync") return;
+    if (area !== QP_AREA) return;
     Object.keys(changes).forEach(function (k) { settings[k] = changes[k].newValue; });
     apply();
   });

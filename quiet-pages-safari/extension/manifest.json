@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "Quiet Pages",
+  "version": "0.2.0",
+  "description": "Hides words you choose while you read in Kindle Cloud Reader. Runs only on your screen; your books are never changed.",
+  "permissions": [
+    "storage"
+  ],
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Quiet Pages"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://read.amazon.com/*",
+        "https://read.amazon.ca/*",
+        "https://read.amazon.co.uk/*",
+        "https://read.amazon.com.au/*",
+        "https://read.amazon.in/*",
+        "https://read.amazon.de/*",
+        "https://read.amazon.fr/*",
+        "https://read.amazon.es/*",
+        "https://read.amazon.it/*",
+        "https://read.amazon.co.jp/*",
+        "https://read.amazon.com.mx/*",
+        "https://read.amazon.com.br/*"
+      ],
+      "js": [
+        "browser.js",
+        "words.js",
+        "filter.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "all_frames": true,
+      "match_about_blank": true,
+      "run_at": "document_start"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "browser_specific_settings": {
+    "safari": {
+      "strict_min_version": "16.4"
+    }
+  }
+}

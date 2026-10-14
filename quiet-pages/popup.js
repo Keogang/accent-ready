@@ -3,7 +3,7 @@ var settings;
 
 function save(patch) {
   Object.assign(settings, patch);
-  chrome.storage.sync.set(patch);
+  QP_STORE.set(patch);
   render();
 }
 
@@ -59,7 +59,7 @@ function loadStats() {
   });
 }
 
-chrome.storage.sync.get(QP_DEFAULTS, function (stored) {
+QP_STORE.get(QP_DEFAULTS, function (stored) {
   settings = Object.assign({}, QP_DEFAULTS, stored);
   $("customBlock").value = settings.customBlock.join("\n");
   $("customAllow").value = settings.customAllow.join("\n");
