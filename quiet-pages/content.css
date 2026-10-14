@@ -23,3 +23,62 @@
   opacity: 1;
   outline: 1px dashed currentColor;
 }
+
+/* ---------- page images ---------- */
+
+/* A page stays hidden until its words have been checked. */
+img.qp-checking {
+  visibility: hidden !important;
+}
+
+.qp-overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2147483000;
+}
+
+.qp-overlay.qp-checking-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 15px/1.4 system-ui, sans-serif;
+  color: #888;
+}
+
+.qp-box {
+  position: absolute;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+.qp-box.qp-bar {
+  background: #111;
+}
+
+.qp-box.qp-blur {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  background: rgba(127, 127, 127, 0.15);
+}
+
+.qp-box.qp-replace {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font: 0.9em system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.qp-box.qp-peekable {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.qp-box.qp-revealed {
+  background: transparent !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: transparent;
+  outline: 1px dashed #888;
+}

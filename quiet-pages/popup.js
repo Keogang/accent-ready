@@ -45,9 +45,15 @@ function loadStats() {
     chrome.tabs.sendMessage(tab.id, { type: "qp-report" }, function () { void chrome.runtime.lastError; });
     setTimeout(function () {
       chrome.runtime.sendMessage({ type: "qp-get-stats", tabId: tab.id }, function (s) {
-        if (!s || (!s.words && !s.hidden)) return;
+        if (!s || (!s.words && !s.hidden && !s.pages && !s.error)) return;
         $("hidden").textContent = s.hidden;
-        $("sample").textContent = s.sample || "(no readable text found)";
+        // Prefer the words read from the page image; the page's own text is
+        // usually just menus.
+        $("sample").textContent = s.ocrSample || s.sample || "(no readable text found)";
+        $("pages").textContent = s.pages
+          ? "Pages checked so far: " + s.pages
+          : "No book pages checked yet.";
+        $("error").textContent = s.error ? "Problem: " + s.error : "";
       });
     }, 250);
   });
