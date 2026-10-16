@@ -26,6 +26,36 @@ Kindle Cloud Reader (read.amazon.com) turns the page.
 2. Click once on the book page so the browser window is in front.
 3. On the iPhone, tap **Next** (the large button) or **Back**, or swipe left or right.
 
+## On school or work Wi-Fi: use Kindle Relay instead
+School and work networks often stop the iPhone from reaching the Mac, so the page never loads.
+Kindle Relay avoids that. The iPhone sends each page turn to a private channel on the free
+ntfy.sh service, and the Mac listens to that channel. Both devices only need internet access,
+and they can even be on different networks.
+
+### Mac
+1. In Terminal, type `python3 ` (with a space), drag **kindle_relay.py** into the window, and press Return.
+2. Terminal shows your private address, for example `https://ntfy.sh/kindle-1a2b3c4d5e6f7a8b`.
+   It stays the same every time you start Kindle Relay. Keep it private.
+
+### iPhone (one time): make two Shortcuts
+1. Open the **Shortcuts** app and tap **+**.
+2. Tap **Add Action**, search for **Get Contents of URL**, and tap it.
+3. Tap the URL and type your address followed by `/publish?message=next`, for example:
+   `https://ntfy.sh/kindle-1a2b3c4d5e6f7a8b/publish?message=next`
+4. Tap the name at the top, rename the shortcut **Next Page**, and tap **Done**.
+5. Repeat steps 1–4 with `/publish?message=prev`, and name it **Previous Page**.
+6. To put a shortcut on the Home Screen, press and hold it, tap **Share**, and tap **Add to Home Screen**.
+
+**Tip: turn pages without looking.** Go to **Settings > Accessibility > Touch > Back Tap**,
+choose **Double Tap**, and pick **Next Page**. Now a double tap on the back of the iPhone turns the page.
+On an iPhone with an Action button, you can also set it to run **Next Page** in **Settings > Action Button**.
+
+### Test it
+Tap **Next Page** on the iPhone. Terminal on the Mac shows "Next page," and the book turns
+if the Kindle window is in front.
+If Terminal keeps saying "Connection dropped," the district network may block ntfy.sh.
+In that case, use your iPhone's Personal Hotspot for the Mac, or ask your IT staff.
+
 ## Troubleshooting
 - **"Can't reach Mac"**: Check that both devices use the same Wi-Fi and that the Terminal window is still open. If the Mac's address changed, open the new link from Terminal. You can also try the `.local` link it prints, which usually stays the same.
 - **"Mac could not press the key"**: Turn on Terminal under Accessibility (see above), then quit and restart Kindle Remote.
