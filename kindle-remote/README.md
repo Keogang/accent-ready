@@ -9,10 +9,11 @@ Kindle Cloud Reader (read.amazon.com) turns the page.
 
 ## One-time setup (Mac)
 1. Copy this `kindle-remote` folder to your Mac (for example, into Documents).
-2. Double-click **Start Kindle Remote.command**.
-   - If macOS blocks it, right-click it and choose **Open**, then click **Open** again.
-   - If macOS asks you to install "command line developer tools," click **Install**. That provides Python. Then double-click again.
-3. Grant key-press permission. The first time you tap a button, macOS asks Terminal for permission to control your computer. Allow it, or turn on **Terminal** under
+2. Open **Terminal** (press Command-Space, type `Terminal`, and press Return).
+3. Type `python3 ` (with a space after it). Drag **kindle_remote.py** from Finder into the Terminal window, then press Return.
+   - If macOS asks you to install "command line developer tools," click **Install**. That provides Python. When it finishes, repeat this step.
+   - This route avoids the macOS "cannot be opened" block. To use the double-click file instead, go to **System Settings > Privacy & Security**, scroll down, and click **Open Anyway** next to "Start Kindle Remote.command."
+4. Grant key-press permission. The first time you tap a button, macOS asks Terminal for permission to control your computer. Allow it, or turn on **Terminal** under
    **System Settings > Privacy & Security > Accessibility**.
 
 ## One-time setup (iPhone)
@@ -21,7 +22,7 @@ Kindle Cloud Reader (read.amazon.com) turns the page.
 3. Tap **Share > Add to Home Screen**. Now **Page Turner** works like an app.
 
 ## Reading
-1. On the Mac, start Kindle Remote and open your book at read.amazon.com.
+1. On the Mac, start Kindle Remote (step 3 above) and open your book at read.amazon.com.
 2. Click once on the book page so the browser window is in front.
 3. On the iPhone, tap **Next** (the large button) or **Back**, or swipe left or right.
 
