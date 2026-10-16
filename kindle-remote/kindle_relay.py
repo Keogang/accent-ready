@@ -21,6 +21,13 @@ from pathlib import Path
 SERVER = os.environ.get("KINDLE_RELAY_SERVER", "https://ntfy.sh")
 KEY_CODES = {"next": 124, "prev": 123}  # Right arrow, Left arrow
 
+# Forgive small differences in what the iPhone Shortcut sends.
+ALIASES = {
+    "next": "next", "n": "next", "forward": "next", "right": "next", "next page": "next",
+    "prev": "prev", "p": "prev", "previous": "prev", "back": "prev", "left": "prev",
+    "previous page": "prev",
+}
+
 
 def load_channel():
     """A hard-to-guess channel name kept between runs so the iPhone setup keeps working."""
@@ -49,9 +56,14 @@ def listen(url):
         print("Connected. Waiting for page turns...")
         for line in proc.stdout:
             word = line.strip().lower()
-            if word in KEY_CODES:
-                press(word)
-                print("Next page" if word == "next" else "Previous page")
+            if not word:
+                continue  # keep-alive from the server
+            direction = ALIASES.get(word)
+            if direction:
+                press(direction)
+                print("Next page" if direction == "next" else "Previous page")
+            else:
+                print(f'Ignored "{line.strip()}". The Shortcut must end in message=next or message=prev.')
         err = proc.stderr.read().strip()
         proc.wait()
         print(f"Connection dropped{': ' + err if err else ''}. Reconnecting in 3 seconds...")
