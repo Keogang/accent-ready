@@ -182,7 +182,7 @@
     img.classList.toggle("qp-checking", hide);
     var overlay = overlayFor(img);
     overlay.classList.toggle("qp-checking-note", hide);
-    if (hide) overlay.textContent = "Quiet Pages is checking this page…";
+    overlay.textContent = hide ? "Quiet Pages is checking this page…" : "";
   }
 
   function readPage(img) {
@@ -192,11 +192,12 @@
       try { await img.decode(); } catch (e) { /* drawn below anyway */ }
       var w = img.naturalWidth, h = img.naturalHeight;
       if (w < MIN_PAGE_WIDTH) return { src: src, lines: [], small: true };
-      // Small text reads more accurately when enlarged.
-      var scale = w < 1400 ? 2 : 1;
+      // Small text reads more accurately when enlarged, but phones and tablets
+      // don't have the memory for it; there, big pages are shrunk instead.
+      var scale = QP_MOBILE ? Math.min(1, 2200 / Math.max(w, h)) : (w < 1400 ? 2 : 1);
       var canvas = document.createElement("canvas");
-      canvas.width = w * scale;
-      canvas.height = h * scale;
+      canvas.width = Math.round(w * scale);
+      canvas.height = Math.round(h * scale);
       var ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       var corner = ctx.getImageData(2, 2, 1, 1).data;

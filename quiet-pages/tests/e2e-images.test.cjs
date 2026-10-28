@@ -44,7 +44,9 @@ window.show = (img, url) => {
 (async () => {
   const ctx = await chromium.launchPersistentContext('', {
     headless: true, executablePath: process.env.CHROMIUM_PATH || undefined,
-    args: ['--headless=new', `--disable-extensions-except=${ext}`, `--load-extension=${ext}`],
+    args: ['--headless=new', `--disable-extensions-except=${ext}`, `--load-extension=${ext}`]
+      // QP_TEST_UA pretends to be another device, e.g. an iPad, to test the phone/tablet settings.
+      .concat(process.env.QP_TEST_UA ? [`--user-agent=${process.env.QP_TEST_UA}`] : []),
   });
   await ctx.route('https://read.amazon.com/**', r => r.fulfill({ contentType: 'text/html', body: PAGE }));
   let [sw] = ctx.serviceWorkers(); if (!sw) sw = await ctx.waitForEvent('serviceworker');

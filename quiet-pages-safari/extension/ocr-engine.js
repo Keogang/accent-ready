@@ -1,8 +1,10 @@
-// The word reader (OCR), shared by Chrome and Safari. Uses Tesseract.js; the
+// The word reader (OCR), shared by Chrome and Safari. Load browser.js first. Uses Tesseract.js; the
 // engine and the English language data ship inside the extension, so nothing
 // is downloaded or sent anywhere.
 
-var QP_WORKERS = 2; // two pages can be read at once (the current one and the next)
+// Two pages can be read at once (the current one and the next), except on
+// phones and tablets, where one reader keeps memory use low.
+var QP_WORKERS = QP_MOBILE ? 1 : 2;
 var qpSchedulerPromise = null;
 
 function qpScheduler() {

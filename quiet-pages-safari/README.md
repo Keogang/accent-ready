@@ -6,6 +6,9 @@ version: each page image stays hidden for a moment while the extension reads its
 words on your Mac, then appears with black bars over blocked words. Nothing is sent
 anywhere, and your books are never changed.
 
+> **iPhone or iPad?** The same extension works there too. Follow
+> [INSTALL-IPHONE-IPAD.md](INSTALL-IPHONE-IPAD.md) instead of the steps below.
+
 ## What you need
 
 - A Mac with Safari 16.4 or later (macOS Ventura or later).
