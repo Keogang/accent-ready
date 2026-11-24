@@ -1,140 +1,92 @@
-import { useEffect, useState } from 'react'
-import type { Book, VerseLocation } from './data/types'
-import { loadImportedLibrary, fetchBundledLibrary, saveLibrary, clearImportedLibrary } from './data/storage'
-import { sampleLibrary } from './data/sampleLibrary'
-import { loadAnnotations, createAnnotation, updateAnnotation, deleteAnnotation } from './data/annotations'
-import type { Annotation, AnnotationDraft } from './data/annotationTypes'
-import { loadProgress, saveProgress } from './data/progress'
-import { HomeScreen } from './components/HomeScreen'
-import { VerseReader } from './components/VerseReader'
-import { AnnotationsScreen } from './components/AnnotationsScreen'
+import { useEffect, useMemo, useState } from 'react'
+import type { Lang, PracticeItem } from './data/types'
+import { SOUNDS } from './data/sounds'
+import { t } from './i18n'
+import { load, save } from './storage'
+import { SetupScreen, type Filters } from './components/SetupScreen'
+import { WordList } from './components/WordList'
+import { PracticeDeck } from './components/PracticeDeck'
+import { TechniquesSheet } from './components/TechniquesSheet'
 import './App.css'
 
-type LibrarySource = 'imported' | 'bundled' | 'sample'
+type Screen = 'setup' | 'list' | 'practice'
+
+const DEFAULT_FILTERS: Filters = { soundIds: [], syllables: [1, 2], position: 'all' }
+
+/** Builds the practice list from the parent's choices, in sound order, without duplicate words. */
+function buildItems(filters: Filters): PracticeItem[] {
+  const seen = new Set<string>()
+  const items: PracticeItem[] = []
+  for (const sound of SOUNDS) {
+    if (!filters.soundIds.includes(sound.id)) continue
+    for (const w of sound.words) {
+      const sylKey = Math.min(w.syllables, 4)
+      if (!filters.syllables.includes(sylKey)) continue
+      if (filters.position !== 'all' && w.position !== filters.position) continue
+      if (seen.has(w.word)) continue
+      seen.add(w.word)
+      items.push({ ...w, soundId: sound.id, key: `${sound.id}:${w.word}` })
+    }
+  }
+  return items
+}
 
 export default function App() {
-  const [library, setLibrary] = useState<Book[] | null>(null)
-  const [source, setSource] = useState<LibrarySource>('bundled')
-  const [location, setLocation] = useState<VerseLocation | null>(null)
-  const [continueLocation, setContinueLocation] = useState<VerseLocation | null>(() => loadProgress())
-  const [highlightsOpen, setHighlightsOpen] = useState(false)
-  const [annotations, setAnnotations] = useState<Annotation[]>(() => loadAnnotations())
+  const [lang, setLang] = useState<Lang>(() => load<Lang>('hc.lang', 'es'))
+  const [filters, setFilters] = useState<Filters>(() => ({ ...DEFAULT_FILTERS, ...load<Partial<Filters>>('hc.filters', {}) }))
+  const [screen, setScreen] = useState<Screen>('setup')
+  const [startIndex, setStartIndex] = useState(0)
+  const [techniquesFor, setTechniquesFor] = useState<string[] | null>(null)
 
+  useEffect(() => save('hc.lang', lang), [lang])
+  useEffect(() => save('hc.filters', filters), [filters])
   useEffect(() => {
-    const imported = loadImportedLibrary()
-    if (imported) {
-      setLibrary(imported)
-      setSource('imported')
-      return
-    }
-    fetchBundledLibrary()
-      .then((bundled) => {
-        setLibrary(bundled)
-        setSource('bundled')
-      })
-      .catch(() => {
-        setLibrary(sampleLibrary)
-        setSource('sample')
-      })
-  }, [])
+    document.documentElement.lang = lang
+  }, [lang])
 
-  useEffect(() => {
-    if (!location) return
-    saveProgress(location)
-    setContinueLocation(location)
-  }, [location])
+  const items = useMemo(() => buildItems(filters), [filters])
+  const s = t(lang)
 
-  function handleImportLibrary(newLibrary: Book[]) {
-    saveLibrary(newLibrary)
-    setLibrary(newLibrary)
-    setSource('imported')
-    setLocation(null)
-  }
-
-  function handleResetToBundled() {
-    clearImportedLibrary()
-    setLibrary(null)
-    setLocation(null)
-    fetchBundledLibrary()
-      .then((bundled) => {
-        setLibrary(bundled)
-        setSource('bundled')
-      })
-      .catch(() => {
-        setLibrary(sampleLibrary)
-        setSource('sample')
-      })
-  }
-
-  function handleCreateHighlight(draft: AnnotationDraft): Annotation {
-    const { annotations: next, created } = createAnnotation(annotations, draft)
-    setAnnotations(next)
-    return created
-  }
-
-  function handleUpdateAnnotation(id: string, changes: Partial<Pick<Annotation, 'note' | 'tags'>>) {
-    setAnnotations(updateAnnotation(annotations, id, changes))
-  }
-
-  function handleDeleteAnnotation(id: string) {
-    setAnnotations(deleteAnnotation(annotations, id))
-  }
-
-  if (!library) {
-    return (
-      <div className="loading-screen">
-        <p>Loading…</p>
-      </div>
-    )
-  }
-
-  if (highlightsOpen) {
-    return (
-      <AnnotationsScreen
-        annotations={annotations}
-        onBack={() => setHighlightsOpen(false)}
-        onJumpTo={(loc) => {
-          setLocation(loc)
-          setHighlightsOpen(false)
-        }}
-        onDeleteAnnotation={handleDeleteAnnotation}
-      />
-    )
-  }
-
-  if (!location) {
-    const note =
-      source === 'sample'
-        ? 'Could not load the full text, showing a small placeholder sample instead.'
-        : source === 'imported'
-          ? null
-          : 'Full Book of Mormon text (public domain edition, no footnotes/chapter summaries). Import your own JSON to use a different edition.'
-    return (
-      <HomeScreen
-        library={library}
-        onSelectChapter={setLocation}
-        onImportLibrary={handleImportLibrary}
-        onResetToDefault={handleResetToBundled}
-        note={note}
-        canReset={source === 'imported'}
-        continueLocation={continueLocation}
-        onOpenHighlights={() => setHighlightsOpen(true)}
-        annotationCount={annotations.length}
-      />
-    )
+  function openPractice(index: number) {
+    setStartIndex(index)
+    setScreen('practice')
   }
 
   return (
-    <VerseReader
-      library={library}
-      location={location}
-      onLocationChange={setLocation}
-      onGoHome={() => setLocation(null)}
-      onOpenHighlights={() => setHighlightsOpen(true)}
-      annotations={annotations}
-      onCreateHighlight={handleCreateHighlight}
-      onUpdateAnnotation={handleUpdateAnnotation}
-      onDeleteAnnotation={handleDeleteAnnotation}
-    />
+    <div className="app">
+      {screen === 'setup' && (
+        <SetupScreen
+          lang={lang}
+          filters={filters}
+          matchCount={items.length}
+          onChange={setFilters}
+          onToggleLang={() => setLang(lang === 'es' ? 'en' : 'es')}
+          onSubmit={() => setScreen('list')}
+          onOpenTechniques={() => setTechniquesFor(filters.soundIds)}
+        />
+      )}
+      {screen === 'list' && (
+        <WordList
+          lang={lang}
+          items={items}
+          onBack={() => setScreen('setup')}
+          onPick={openPractice}
+          onOpenTechniques={() => setTechniquesFor(filters.soundIds)}
+        />
+      )}
+      {screen === 'practice' && items.length > 0 && (
+        <PracticeDeck
+          lang={lang}
+          items={items}
+          startIndex={startIndex}
+          onBack={() => setScreen('list')}
+          onNewList={() => setScreen('setup')}
+          onOpenTechniques={(soundId) => setTechniquesFor([soundId, ...filters.soundIds.filter((id) => id !== soundId)])}
+        />
+      )}
+      {techniquesFor && (
+        <TechniquesSheet lang={lang} soundIds={techniquesFor} onClose={() => setTechniquesFor(null)} title={s.techniquesTitle} />
+      )}
+    </div>
   )
 }
